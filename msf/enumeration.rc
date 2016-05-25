@@ -1,0 +1,53 @@
+<ruby>
+xhost = '192.168.89.1/24'
+run_single("db_nmap --top-ports=1 --script=discovery -n -T5 -Pn -sn -v #{framework.datastore['RHOSTS']} -oN /root/offsec/output/discovery")
+begin 
+
+framework.db.hosts.each do |host|
+    run_single("mkdir /root/offsec/output/#{xhost}")
+    host.services.each do |serv|
+        next if not serv.host
+        next if (serv.state !=Msf::ServiceState::Open)
+        next if not(serv.name =~/ssh/ or
+            serv.name =~/smtp/ or
+            serv.name =~/snmp/ or
+            serv.name =~/smb/ or
+            serv.name =~/http/ or
+            serv.name =~/ftp/ or
+            serv.name =~/ssl/)
+        xport = serv.port.to_i
+        xprot = serv.proto 
+        xname = serv.name
+        oname = host.os_name
+        xhost = host.address
+        if (xname =~/ssh/)
+            print_line("Enumerating #{xname} on port #{xport} for #{xhost}")
+            run_single("db_nmap -sV -A -p #{xport} --script='*ssh*' #{xhost} -vv -n -T3  -o /root/offsec/output/#{xhost}/#{xname}")
+        elsif (xname =~/smtp/)
+            print_line("Enumerating #{xname} on port #{xport} for #{xhost}")
+            run_single("db_nmap -sV -A -p #{xport} --script='*smtp*' #{xhost} -vv -n -T3  -o /root/offsec/output/#{xhost}/#{xname}")
+        elsif (xname =~/snmp/)
+            print_line("Enumerating #{xname} on port #{xport} for #{xhost}")
+            run_single("db_nmap -sV -A -sU#{xport} -PU#{xport} -p #{xport} --script='*snmp*' #{xhost} -vv -n -T3  -o /root/offsec/output/#{xhost}/#{xname}")
+        elsif (xname =~/smb/)
+            print_line("Enumerating #{xname} on port #{xport} for #{xhost}")
+            run_single("db_nmap -sV -A -p #{xport} -PR#{xport} -PA#{xport} --script='*smb*' #{xhost} -vv -n -T3  -o /root/offsec/output/#{xhost}/#{xname}")
+        elsif (xname =~/http/)
+            print_line("Enumerating #{xname} on port #{xport} for #{xhost}")
+            run_single("db_nmap -sV -A -p #{xport}  -PR#{xport} -PA#{xport} --script='*http*' #{xhost} -vv -n -T3  -o /root/offsec/output/#{xhost}/#{xname}")
+        elsif (xname =~/ftp/)
+             print_line("Enumerating #{xname} on port #{xport} for #{xhost}")
+             run_single("db_nmap -sV -A -p #{xport} --script='*ftp*' #{xhost} -PR#{xport} -PA#{xport} -vv -n -T3  -o /root/offsec/output/#{xhost}/#{xname}")
+        else (xname =~/ssl/)
+           print_line("Enumerating #{xname} on port #{xport} for #{xhost}")
+           run_single("db_nmap -sV -A -p #{xport} --script='*ssl*' #{xhost} -PR#{xport} -PA#{xport} -vv -n -T3  -o /root/offsec/output/#{xhost}/#{xname}")
+        end
+    end # host.services.each
+end # framework.db.hosts.each
+end
+</ruby>
+
+
+
+
+   
