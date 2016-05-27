@@ -1,10 +1,10 @@
-// Author: Brian Coffey
-// Resource script to automate the scanning / enumeration in msfconsole for OSCP, since you can't use metasploit's modules on the exam...
-// but they don't say anything about using it's beautiful database & framework ;)
+# Author: Brian Coffey
+# Resource script to automate the scanning / enumeration in msfconsole for OSCP, since you can't use metasploit's modules on the exam...
+# but they don't say anything about using it's beautiful database & framework ;)
 
 
 
-// Change xhost to whatever subnet you need.
+# Change xhost to whatever subnet you need.
 
 <ruby>
 xhost = '192.168.89.1/24'
