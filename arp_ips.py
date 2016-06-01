@@ -38,15 +38,3 @@ arp_sniff = sniff(filter="arp",count=10).summary()
 print arp_sniff
 
 
-class db():
-    def __self__():
-        self
-    def con(self):
-        con = connect(database='msf')
-        cur = con.cursor()
-        cur.execute('select * from hosts;')
-        hosts = cur.fetchall()
-        print hosts
-
-k = db()
-k.con()
