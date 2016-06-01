@@ -6,10 +6,16 @@
 
 # Change xhost to whatever subnet you need.
 
+
 <ruby>
-xhost = '192.168.89.1/24'
-run_single("setg RHOSTS #{xhost}")
-run_single("db_nmap --top-ports=10 --script=run_discover --script-args=newtargets -n  --open -T5 -Pn -v #{framework.datastore['RHOSTS']} -oN /root/offsec/output/discovery")
+
+# Automatically gets & sets ip address using kernel routing table to extranet (aka gmail.com, port 80)
+
+subnet = %x`python -c "import socket; s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM); s.connect(('gmail.com',80));  host = s.getsockname()[0]; s.close(); g = host.split('.'); subnet = '{}.{}.{}.1/24'.format(g[0],g[1], g[2]); print subnet"`
+print_line("#{subnet}")
+#run_single("setg RHOSTS #{xhost}")
+print_line("Running: db_nmap --top-ports=10 --script=run_discover --script-args=newtargets -n  --open -T5 -Pn -v #{subnet} -oN /root/offsec/output/discovery")
+run_single("db_nmap --top-ports=10 --script=run_discover --script-args=newtargets -n  --open -T5 -Pn -v #{xhost} -oN /root/offsec/output/discovery")
 
 begin 
 
@@ -29,11 +35,9 @@ framework.db.hosts.each do |host|
             serv.name =~/ftp/ or
             serv.name =~/ssl/)
         xport = serv.port.to_i
-        xfullname = serv.fullname
         xprot = serv.proto 
         xname = serv.name
         oname = host.os_name
-        print_line("#{xfullname}")
         if (xname =~/ssh/)
             print_line("Enumerating #{xname} on port #{xport} for #{xhost}")
             t1 = Thread.new {
