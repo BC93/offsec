@@ -1,5 +1,11 @@
 #!/usr/bin/python
 
+''' This was used in Fuzzing an old version of Exchange running on a lab machine. I noticed 
+that sending a USER cmd with a large buffer (If I recall it was somewhere between 20k and 30k in length) would cause a DOS.
+I haven't found anything about this vulnerability for the version it was running. So hopefully I can get my hands on a copy
+to write up a Proof of Concept and test for remote code execution.
+'''
+
 import socket
 
 # globals
