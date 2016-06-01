@@ -6,8 +6,7 @@ from requests import request
 
 '''
 
-I think this module is supposed to be similar to dirbuster. Considering it uses dirb's wordslists.
-No idea.
+Query's database for hosts running webservices on the default port (port 80) and runs dirb against them.
 
 '''
 
